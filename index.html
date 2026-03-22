@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My ChatGPT UI</title>
+    <style>
+        body {
+          margin: 0;
+          font-family: Arial, sans-serif;
+          background-color: #343541;
+          color: white;
+          display: flex;
+          flex-direction: column;
+          height: 100vh;
+        }
+
+        .chat-container {
+          flex: 1;
+          padding: 20px;
+          overflow-y: auto;
+        }
+
+        .message {
+          max-width: 60%;
+          margin: 10px 0;
+          padding: 12px;
+          border-radius: 8px;
+          line-height: 1.4;
+        }
+
+        .user {
+          background-color: #0b93f6;
+          align-self: flex-end;
+          margin-left: auto;
+        }
+
+        .bot {
+          background-color: #444654;
+          align-self: flex-start;
+          margin-right: auto;
+        }
+
+        .input-container {
+          display: flex;
+          padding: 10px;
+          background-color: #40414f;
+        }
+
+        input {
+          flex: 1;
+          padding: 10px;
+          border-radius: 5px;
+          border: none;
+          outline: none;
+          font-size: 16px;
+        }
+
+        button {
+          margin-left: 10px;
+          padding: 10px 15px;
+          border: none;
+          border-radius: 5px;
+          background-color: #19c37d;
+          color: white;
+          font-size: 16px;
+          cursor: pointer;
+        }
+
+        button:hover {
+          background-color: #17a86b;
+        }
+    </style>
+</head>
+<body>
+
+<div class="chat-container" id="chat"></div>
+
+<div class="input-container">
+    <input type="text" id="prompt" placeholder="Type your message..." />
+    <button onclick="sendMessage()">Send</button>
+</div>
+
+<script>
+    async function sendMessage() {
+      const input = document.getElementById("prompt");
+      const chat = document.getElementById("chat");
+
+      const userText = input.value.trim();
+      if (!userText) return;
+
+      // Add user message
+      const userMsg = document.createElement("div");
+      userMsg.className = "message user";
+      userMsg.innerText = userText;
+      chat.appendChild(userMsg);
+
+      input.value = "";
+
+      // Scroll
+      chat.scrollTop = chat.scrollHeight;
+
+      try {
+        const response = await fetch(
+          `http://localhost:9091/api/ai/chat?prompt=${encodeURIComponent(userText)}`
+        );
+
+        const data = await response.text(); // change to .json() if API returns JSON
+
+        // Add bot message
+        const botMsg = document.createElement("div");
+        botMsg.className = "message bot";
+        botMsg.innerText = data;
+        chat.appendChild(botMsg);
+
+      } catch (error) {
+        const errMsg = document.createElement("div");
+        errMsg.className = "message bot";
+        errMsg.innerText = "Error connecting to backend";
+        chat.appendChild(errMsg);
+      }
+
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    // Send on Enter key
+    document.getElementById("prompt").addEventListener("keypress", function (e) {
+      if (e.key === "Enter") {
+        sendMessage();
+      }
+    });
+</script>
+
+</body>
+</html>
