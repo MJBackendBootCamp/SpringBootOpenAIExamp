@@ -1,0 +1,17 @@
+1.Ollama installation
+Download and install Ollama from https://ollama.com
+.
+
+2.Pull additional models if needed:
+ollama pull phi3:mini
+
+
+3.Verify installation:
+ollama list
+
+You should see installed models like:
+
+NAME         ID              SIZE      MODIFIED
+phi3:mini    4f2222927938    2.2 GB    <time>
+
+local url - http://localhost:9091/api/ai/chat?prompt=Explain Python in one line
